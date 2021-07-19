@@ -67,7 +67,7 @@ image_datasets = {x: datasets.ImageFolder(os.path.join(data_dir, x),
                                           data_transforms[x])
                   for x in ["train", "val"]}
 dataloaders = {x: torch.utils.data.DataLoader(image_datasets[x], batch_size=4,
-                                              shuffle=True, num_workers=4)
+                                              shuffle=True, num_workers=1)
               for x in ["train", "val"]}
 dataset_sizes = {x: len(image_datasets[x]) for x in ["train", "val"]}
 class_names = image_datasets["train"].classes
@@ -188,14 +188,15 @@ def boardshow(inp):
     return inp
 
 
-model = models.resnet18(pretrained=True)
+model = models.vgg11(pretrained=True)
+print(model)
 for param in model.parameters():
     param.requires_grad = False
-num_ftrs = model.fc.in_features
-model.fc = nn.Linear(num_ftrs, 2)
+num_ftrs = model.classifier[0].in_features
+model.classifier = nn.Linear(num_ftrs, 2)
 model = model.to(device)
 criterion = nn.CrossEntropyLoss()
-optimizer = optim.SGD(model.fc.parameters(), lr=0.001, momentum=0.9)
+optimizer = optim.SGD(model.classifier.parameters(), lr=0.001, momentum=0.9)
 exp_lr_scheduler = lr_scheduler.StepLR(optimizer, step_size=7, gamma=0.1)
 
 model = train_model(model, criterion, optimizer, exp_lr_scheduler,
