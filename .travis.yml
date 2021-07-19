@@ -21,7 +21,7 @@ matrix:
 before_install:
     - sudo apt-get update
     - sudo updatedb
-    - apt install graphviz
+    - sudo apt-get install graphviz
 
 install:
     - pip install --progress-bar off ipython
