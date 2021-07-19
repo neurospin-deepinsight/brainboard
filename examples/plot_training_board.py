@@ -44,14 +44,14 @@ def imshow(inp, title=None):
 
 data_transforms = {
     "train": transforms.Compose([
-        transforms.RandomResizedCrop(224),
+        transforms.RandomResizedCrop(64),
         transforms.RandomHorizontalFlip(),
         transforms.ToTensor(),
         transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225])
     ]),
     "val": transforms.Compose([
         transforms.Resize(256),
-        transforms.CenterCrop(224),
+        transforms.CenterCrop(64),
         transforms.ToTensor(),
         transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225])
     ]),
@@ -153,7 +153,6 @@ def train_model(model, criterion, optimizer, scheduler, num_epochs=25,
                 val_inputs = np.concatenate(val_inputs, axis=0)
                 val_classes = np.asarray(val_classes)
                 indices = np.random.randint(0, len(val_inputs), 4)
-                print(val_inputs.shape, val_classes.shape, indices)
                 out = prep_imgs(val_inputs[indices])
                 board.update_image("prediction", out,
                                    title="-".join(val_classes[indices]))
@@ -189,7 +188,6 @@ def boardshow(inp):
 
 
 model = models.vgg11(pretrained=True)
-print(model)
 for param in model.parameters():
     param.requires_grad = False
 num_ftrs = model.classifier[0].in_features
