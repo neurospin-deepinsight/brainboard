@@ -15,6 +15,15 @@ import subprocess
 from distutils.version import LooseVersion
 import sphinx
 import pysphinxdoc
+from unittest.mock import MagicMock
+
+
+class Mock(MagicMock):
+    @classmethod
+    def __getattr__(cls, name):
+        return MagicMock()
+MOCK_MODULES = ["visdom"]
+sys.modules.update((mod_name, Mock()) for mod_name in MOCK_MODULES)
 
 
 installdir = os.path.abspath("../..")
@@ -24,7 +33,7 @@ if "PYTHONPATH" in env:
 else:
     env["PYTHONPATH"] = installdir
 cmd = ["sphinxdoc", "-v 2", "-p",  installdir, "-n", "brainboard", "-o", "..",
-       "-i", "brainboard"]
+       "-m"] + MOCK_MODULES + ["-i", "brainboard"]
 subprocess.check_call(cmd, env=env)
 sys.path.insert(0, installdir)
 

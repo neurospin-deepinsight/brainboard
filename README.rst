@@ -62,6 +62,6 @@ Complete instructions are available `here
 License
 =======
 
-This project is under the followwing
+This project is under the following
 `LICENSE <https://github.com/neurospin-deepinsight/brainboard/blob/master/LICENSE.rst>`_.
 

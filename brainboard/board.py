@@ -14,7 +14,6 @@ Common functions to display a dynamic board.
 # Imports
 import sys
 import json
-import time
 from subprocess import Popen, PIPE
 import numpy as np
 import visdom
@@ -24,7 +23,7 @@ class Board(object):
     """ Define a dynamic board: usefull to gather interesting plottings
     during the training.
     """
-    def __init__(self, port=8097, host="http://localhost", env="main"):
+    def __init__(self, port=8096, host="http://localhost", env="main"):
         """ Init class.
 
         Parameters
@@ -63,7 +62,6 @@ class Board(object):
         cmd = "{0} -m visdom.server -p {1}".format(current_python, self.port)
         print("Starting visdom server:\n{0}".format(cmd))
         self.server = Popen(cmd, shell=True, stdout=PIPE, stderr=PIPE)
-        time.sleep(3)
 
     def update_image(self, name, images, title=None):
         """ Update image display.
