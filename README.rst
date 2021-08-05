@@ -47,7 +47,7 @@ Where to start
 Examples are available in the
 `gallery <https://brainboard.readthedocs.io/en/latest/auto_gallery/gallery.html>`_.
 All datasets are described in the
-`API documentation <https://brainboard.readthedocs.io/en/latest/generated/brainboard.html>`_.
+`API documentation <https://brainboard.readthedocs.io/en/latest/generated/documentation.html>`_.
 
 Install
 =======

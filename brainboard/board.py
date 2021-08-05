@@ -110,4 +110,4 @@ class Board(object):
             the labels to be displayed.
         """
         self.viewer.bar(
-            labels, opts={"title": "name", "caption": "name"}, win=name)
+            labels, opts={"title": name, "caption": name}, win=name)
