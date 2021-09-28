@@ -135,8 +135,8 @@ def denormalize(tensor):
     means = [0.485, 0.456, 0.406]
     stds = [0.229, 0.224, 0.225]
     denormalized = tensor.clone()
-    for channel, mean, std in zip(denormalized[0], means, stds):
-        channel.mul_(std).add_(mean)
+    for cnt in range(len(denormalized[0])):
+        denormalized[0, cnt] = denormalized[0, cnt] * stds[cnt] + means[cnt]
 
     return denormalized
 
