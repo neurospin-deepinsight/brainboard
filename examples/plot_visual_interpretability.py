@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
-Visualize image-specific class saliency with backpropagation
-============================================================
+Inspect trained networks
+========================
 
 Credit: A Grigis
 
@@ -18,6 +18,7 @@ try out various visualization techniques to understand them more deeply:
 """
 
 import os
+import tempfile
 import subprocess
 import numpy as np
 from PIL import Image
@@ -378,10 +379,10 @@ def download(datadir):
 
 
 # Load data
-datadir = os.path.dirname(__file__)
-data = download(datadir)
-for key in data.keys():
-    data[key] = load_image(data[key])
+with tempfile.TemporaryDirectory() as datadir:
+    data = download(datadir)
+    for key in data.keys():
+        data[key] = load_image(data[key])
 
 
 # Load a pretrained model
