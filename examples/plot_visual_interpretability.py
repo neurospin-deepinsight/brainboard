@@ -42,6 +42,7 @@ def load_image(image_path):
     ----------
     image_path: str
         a path to the image.
+
     Returns
     -------
     out: instance of PIL.Image
@@ -78,6 +79,7 @@ def apply_transforms(image, size=None):
     Notes
     -----
     Symbols used to describe dimensions:
+
     * N: number of images in a batch.
     * C: number of channels.
     * H: height of the image.
@@ -127,6 +129,7 @@ def denormalize(tensor):
     Notes
     -----
     Symbols used to describe dimensions:
+
     * N: number of images in a batch.
     * C: number of channels.
     * H: height of the image.
@@ -196,6 +199,7 @@ def format_for_plotting(tensor):
     Notes
     -----
     Symbols used to describe dimensions:
+
     * N: number of images in a batch.
     * C: number of channels.
     * H: height of the image.
@@ -393,11 +397,11 @@ print(model)
 ############################################################################
 # Visualizing kernels
 # -------------------
-# 
+#
 # Typical-looking filters on the first conv layer of a trained AlexNet.
 # Notice that the first-layer weights are very nice and smooth, indicating
 # nicely converged network. The color/grayscale features are clustered
-# because the AlexNet contains two separate streams of processing, and an
+# because the AlexNet contains two separate streams of processing, and an
 # apparent consequence of this architecture is that one stream develops
 # high-frequency grayscale features and the other low-frequency color features.
 
@@ -415,6 +419,7 @@ else:
 #
 # Simply plot what each filter has extracted (output features) after a
 # convolution operation in each layer.
+#
 # The initial layers retain most of
 # the input image features. It looks like the convolution filters are
 # activated at every part of the input image. This gives us an intuition that
@@ -429,6 +434,7 @@ else:
 # encoded by the filters were not found in the input image. Most probably,
 # these patterns must be complex shapes that are not present in this input
 # image.
+#
 # We can compare these insights with how our own visual perception works: when
 # we look at an object (say bicycle) we don't sit and observe each and every
 # detail of the object. All we see is an object with two wheels being joined
@@ -436,6 +442,7 @@ else:
 # simple sketch which just conveys the idea of two wheels and a metallic rod.
 # This information is enough for us to decide that the given object is a
 # bicycle.
+#
 # Something similar is happening in deep neural networks as well. They act as
 # information distillation pipeline where the input image is being converted
 # to a domain which is visually less interpretable (by removing irrelevant
@@ -486,8 +493,9 @@ ax.set_xticks([0, n_filters_in_layer] + peaks)
 
 
 ############################################################################
-# By visualizing filters we get an idea of what pattern each layer has learned
-# to extract from the input.
+# By visualizing filters we get an idea of what pattern each layer has
+# learned to extract from the input.
+#
 # The idea is the following: we start with a picture containing random pixels.
 # We apply the network in evaluation mode to this random image, calculate the
 # average activation of a certain feature map in a certain layer from which
@@ -495,15 +503,17 @@ ax.set_xticks([0, n_filters_in_layer] + peaks)
 # Knowing the gradients for the pixel values we then proceed to update the
 # pixel values in a way that maximizes the average activation of the chosen
 # feature map (response of a specific filter).
+#
 # However, we might end up in a very poor local minimum and have to find a
 # way to guide our optimizer towards a better minimum/better-looking pattern.
-# We can show that frequency of the generated pattern increases with the
+# We can show that frequency of the generated pattern increases with the
 # image size because the convolutional filters have a fixed size but their
-# relative size compared to the image decreases with increasing image
-# resolution. In other words: assume that the pattern that is created always
+# relative size compared to the image decreases with increasing image
+# resolution. In other words: assume that the pattern that is created always
 # has roughly the same size measured in pixels. If we increase the image size,
 # the relative size of the generated pattern will reduce and the pattern
-# frequency increases.
+# frequency increases.
+#
 # So what we want is the low-frequency pattern of a low-resolution example
 # but with a high resolution. To do so, we can start with a low resolution to
 # get a low-frequency pattern. After upscaling, the upscaled pattern has a
