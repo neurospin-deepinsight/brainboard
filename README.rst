@@ -1,6 +1,6 @@
 .. -*- mode: rst -*-
 
-|PythonVersion|_ |Coveralls|_ |Travis|_ |PyPi|_ |Doc|_
+|PythonVersion|_ |Coveralls|_ |Testing|_ |Pep8|_ |PyPi|_ |Doc|_
 
 .. |PythonVersion| image:: https://img.shields.io/badge/python-3.6%20%7C%203.7%20%7C%203.8-blue
 .. _PythonVersion: https://img.shields.io/badge/python-3.6%20%7C%203.7%20%7C%203.8-blue
@@ -8,8 +8,11 @@
 .. |Coveralls| image:: https://coveralls.io/repos/neurospin-deepinsight/brainboard/badge.svg?branch=master&service=github
 .. _Coveralls: https://coveralls.io/github/neurospin/brainboard
 
-.. |Travis| image:: https://travis-ci.com/neurospin-deepinsight/brainboard.svg?branch=master
-.. _Travis: https://travis-ci.com/neurospin/brainboard
+.. |Testing| image:: https://github.com/neurospin-deepinsight/brainboard/actions/workflows/testing.yml/badge.svg
+.. _Testing: https://github.com/neurospin-deepinsight/brainboard/actions
+
+.. |Pep8| image:: https://github.com/neurospin-deepinsight/brainboard/actions/workflows/pep8.yml/badge.svg
+.. _Pep8: https://github.com/neurospin-deepinsight/brainboard/actions
 
 .. |PyPi| image:: https://badge.fury.io/py/brainboard.svg
 .. _PyPi: https://badge.fury.io/py/brainboard
