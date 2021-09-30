@@ -8,7 +8,7 @@
 ###############################################################################
 
 """
-Interfaces to perform forward passs or backpropagation.
+Interfaces to perform forward pass or backpropagation.
 """
 
 # Imports
@@ -107,11 +107,16 @@ class Backprop(object):
     saliency map, which can gives some intuition on regions within the input
     image that contribute the most (and least) to the corresponding output.
 
-    More details on saliency maps: `Deep Inside Convolutional Networks:
+    More details on saliency maps with backpropagation for gradient
+    visualization: `Deep Inside Convolutional Networks:
     Visualising Image Classification Models and Saliency Maps
     <https://arxiv.org/pdf/1312.6034.pdf>`_.
+
+    More details on guided backprobagation: `Striving for Simplicity: The
+    All Convolutional Net <https://arxiv.org/pdf/1412.6806.pdf>`_.
     """
-    def __init__(self, model, conv_klass=nn.Conv2d, activation_klass=nn.ReLU):
+    def __init__(self, model, conv_klass=nn.Conv2d, activation_klass=nn.ReLU,
+                 layer=None):
         """ Init class.
 
         Parameters
@@ -122,13 +127,16 @@ class Backprop(object):
             the type of convolution.
         activation_klass: nn.Module, default nn.ReLU
             the activation class.
+        layer: nn.Conv, default None
+            the target conv layer.
         """
         self.model = model
         self.conv_klass = conv_klass
         self.activation_klass = activation_klass
+        self.layer = None
         self.model.eval()
         self.gradients = None
-        self._register_conv_hook()
+        self._register_conv_hook(layer)
 
     def calculate_gradients(self, input_tensor, target_class=None,
                             take_max=False, guided=False, use_gpu=False):
@@ -174,7 +182,7 @@ class Backprop(object):
 
         # Don't set the gradient target if the model is a binary classifier
         # i.e. has one class prediction
-        if len(output.shape) == 1:
+        if target_class is None or len(output.shape) == 1:
             target = None
         else:
             _, top_class = output.topk(1, dim=1)
@@ -188,9 +196,10 @@ class Backprop(object):
 
             if (target_class is not None) and (top_class != target_class):
                 warnings.warn(UserWarning(
-                    "The predicted class index {top_class.item()} does not"
-                    "equal the target class index {target_class}. "
-                    "Calculating the gradient w.r.t. the predicted class."))
+                    "The predicted class index {0} does not equal the "
+                    "target class index {1}. Calculating the gradient "
+                    "w.r.t. the predicted class.".format(
+                        top_class.item(), target_class)))
 
             # Set the element at top class index to be 1
             target[0][top_class] = 1
@@ -207,17 +216,32 @@ class Backprop(object):
 
         return gradients
 
-    def _register_conv_hook(self):
-        """ Record gradients of the first conv block.
+    def _register_conv_hook(self, layer=None):
+        """ Record gradients of the first conv block or the specified conv
+        layer.
+
+        Parameters
+        ----------
+        layer: nn.Conv, default None
+            the target conv layer.
         """
         def _record_gradients(module, grad_in, grad_out):
             if self.gradients.shape == grad_in[0].shape:
                 self.gradients = grad_in[0]
 
-        for _, module in self.model.named_modules():
-            if isinstance(module, self.conv_klass):
-                module.register_backward_hook(_record_gradients)
-                break
+        def _record_gradients_nocheck(module, grad_in, grad_out):
+            self.gradients = grad_in[0]
+
+        if layer is not None:
+            if type(layer) != self.conv_klass:
+                raise TypeError("The layer must be {0}.".format(
+                    self.conv_klass))
+            layer.register_backward_hook(_record_gradients_nocheck)
+        else:
+            for _, module in self.model.named_modules():
+                if isinstance(module, self.conv_klass):
+                    module.register_backward_hook(_record_gradients)
+                    break
 
     def _register_activation_hooks(self):
         """ Record all activations in order to clip gradients in the forward

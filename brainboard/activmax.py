@@ -9,7 +9,7 @@
 
 
 """
-Activation maximization via gradient descent.
+Activation maximization via gradient ascent.
 """
 
 # Imports
@@ -25,6 +25,9 @@ class GradientAscent(object):
 
     This class implements the gradient ascent algorithm in order to perform
     activation maximization with convolutional neural networks (CNN).
+
+    More details on activation maximization: Erhan, Dumitru et al.,
+    Visualizing Higher-Layer Features of a Deep Network, 2009.
     """
     def __init__(self, model, normalize, denormalize, img_size=224, lr=1.,
                  upscaling_steps=1, upscaling_factor=1.2, use_gpu=False):

@@ -33,6 +33,7 @@ import torchvision.transforms.functional as F
 
 from brainboard.backprop import Forward, Backprop
 from brainboard.activmax import GradientAscent
+from brainboard.occluder import Occluder
 
 
 def load_image(image_path):
@@ -285,7 +286,7 @@ def visualize_kernels(kernels, images_per_row=6):
 
 def visualize_gradients(input_tensor, gradients, max_gradients,
                         figsize=(16, 4), cmap="viridis", alpha=.5):
-    """ Visulaize gradients.
+    """ Visualize gradients.
 
     Parameters
     ----------
@@ -319,6 +320,48 @@ def visualize_gradients(input_tensor, gradients, max_gradients,
         ("Overlay",
          [(format_for_plotting(denormalize(input_tensor)), None, None),
           (format_for_plotting(standardize_and_clip(max_gradients)),
+           cmap,
+           alpha)])
+    ]
+    fig = plt.figure(figsize=figsize)
+    for idx, (title, images) in enumerate(subplots):
+        ax = fig.add_subplot(1, len(subplots), idx + 1)
+        ax.set_axis_off()
+        ax.set_title(title)
+        for image, cmap, alpha in images:
+            ax.imshow(image, cmap=cmap, alpha=alpha)
+
+
+def visualize_saliency(input_tensor, saliency_map, figsize=(16, 4),
+                       cmap="viridis", alpha=.5):
+    """ Visualize a saliency map (ie, a heat map).
+
+    Parameters
+    ----------
+    input_tensor: torch.Tensor (N, C, H, W)
+        the input data.
+    saliency_map: torch.Tensor (1, H, W).
+        the computed channel wise max gradients.
+    figsize: tuple, default (16, 4)
+        the size of the plot.
+    cmap: str, default 'viridis'
+        the color map of the gradients plots.
+    alpha: float, default 0.5
+        the alpha value of the max gradients in order to supperpose the
+        gradients on top of the input image.
+    """
+    # Setup subplots
+    # (title, [(image1, cmap, alpha), (image2, cmap, alpha)])
+    subplots = [
+        ("Input image",
+         [(format_for_plotting(denormalize(input_tensor)), None, None)]),
+        ("Saliency map",
+         [(format_for_plotting(standardize_and_clip(saliency_map)),
+          cmap,
+          None)]),
+        ("Overlay",
+         [(format_for_plotting(denormalize(input_tensor)), None, None),
+          (format_for_plotting(standardize_and_clip(saliency_map)),
            cmap,
            alpha)])
     ]
@@ -539,6 +582,8 @@ visualize_filters(responses, conv4_idx, peaks, images_per_row=4)
 # Display most salient regions within images. By creating a saliency map for
 # neural networks, we can gain some intuition on 'where the network is paying
 # the most attention to' in an input image.
+# First we check the gradients in the first convolutional layer during the
+# backpropagation.
 
 backprop = Backprop(model)
 targets = {
@@ -552,5 +597,24 @@ for name, image in data.items():
         input_tensor, target_class, guided=True, use_gpu=False)
     max_gradients = gradients.max(dim=0, keepdim=True)[0]
     visualize_gradients(input_tensor, gradients, max_gradients)
+
+
+############################################################################
+# Then we investigate which part of the image some classification
+# prediction is coming from by plotting the probability of the class of
+# interest as a function of the position of an occluder
+# object. That is, we iterate over regions of the image, set a patch of the
+# image to be all zero, and look at the probability of the class.
+# We visualize this probability as a 2-dimensional heat map.
+# Note that we reduce the size of the image to speed up the computation,
+# having an impact on the true predicted class probability.
+
+for name, image in data.items():
+    input_tensor = apply_transforms(image, size=128)
+    target_class = targets[name]
+    occluder = Occluder(model, block_size=(40 if target_class == 24 else 10))
+    probs, klass_probs_saliency = occluder.get_saliency(
+        input_tensor[0], target_class, batch_size=1000, use_gpu=False)
+    visualize_saliency(input_tensor, klass_probs_saliency)
 
 plt.show()

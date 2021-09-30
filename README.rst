@@ -2,8 +2,8 @@
 
 |PythonVersion|_ |Coveralls|_ |Testing|_ |Pep8|_ |PyPi|_ |Doc|_
 
-.. |PythonVersion| image:: https://img.shields.io/badge/python-3.6%20%7C%203.7%20%7C%203.8-blue
-.. _PythonVersion: https://img.shields.io/badge/python-3.6%20%7C%203.7%20%7C%203.8-blue
+.. |PythonVersion| image:: https://img.shields.io/badge/python-3.6%20%7C%203.7%20%7C%203.8%20%7C%203.9-blue
+.. _PythonVersion: https://img.shields.io/badge/python-3.6%20%7C%203.7%20%7C%203.8%20%7C%203.9-blue
 
 .. |Coveralls| image:: https://coveralls.io/repos/neurospin-deepinsight/brainboard/badge.svg?branch=master&service=github
 .. _Coveralls: https://coveralls.io/github/neurospin/brainboard
@@ -35,6 +35,18 @@ CEA Neurospin BAOBAB laboratory.
 .. image:: ./doc/source/_static/carousel/visdom.png
     :width: 400px
     :align: center
+
+.. image:: ./doc/source/_static/carousel/gradients_2.png
+    :width: 400px
+    :align: center
+
+.. image:: ./doc/source/_static/carousel/occluder_2.png
+    :width: 400px
+    :align: center
+
+.. image:: ./doc/source/_static/carousel/activations_1.png
+    :width: 400px
+    :align: center
     
 Important links
 ===============
@@ -48,7 +60,7 @@ Where to start
 ==============
 
 Examples are available in the
-`gallery <https://brainboard.readthedocs.io/en/latest/auto_gallery/gallery.html>`_.
+`gallery <https://brainboard.readthedocs.io/en/latest/auto_gallery/index.html>`_.
 All datasets are described in the
 `API documentation <https://brainboard.readthedocs.io/en/latest/generated/documentation.html>`_.
 
