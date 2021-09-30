@@ -61,11 +61,9 @@ class Occluder(object):
         """
         n_channels, size_x, size_y = input_tensor.shape[-3:]
         if self.shape != (size_x, size_y):
-            shift_x = int((size_x % self.block_size) / 2)
-            shift_y = int((size_y % self.block_size) / 2)
             shift_block = self.block_size // 2
-            indices_x = range(shift_x, size_x - shift_x, 1)
-            indices_y = range(shift_y, size_y - shift_y, 1)
+            indices_x = range(shift_block, size_x - shift_block + 1, 1)
+            indices_y = range(shift_block, size_y - shift_block + 1, 1)
             self.grid = np.meshgrid(indices_x, indices_y)
             self.mask = np.ones((self.grid[0].size, size_x, size_y), dtype=int)
             for idx_x in range(self.grid[0].shape[0] - 1):
@@ -134,7 +132,7 @@ class Occluder(object):
                 if torch.cuda.is_available() and use_gpu:
                     occluded_x = occluded_x.cuda(non_blocking=True)
                 occluded_probs.append(
-                    torch.softmax(self.model(occluded_x), dim=1))
+                    torch.softmax(self.model(occluded_x), dim=1).detach())
             occluded_probs = torch.cat(occluded_probs, dim=0)
 
         # Format saliency map

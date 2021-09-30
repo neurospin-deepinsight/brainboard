@@ -451,7 +451,7 @@ print(model)
 conv_layer = model.features[0]
 if isinstance(conv_layer, torch.nn.Conv2d):
     weight_tensor = conv_layer.weight.data.clone()
-    visualize_kernels(weight_tensor, images_per_row=6)
+    #visualize_kernels(weight_tensor, images_per_row=6)
 else:
     print("Can only visualize layers which are convolutional")
 
@@ -496,7 +496,7 @@ forward = Forward(model.features)
 image = data["great_grey_owl"]
 input_tensor = apply_transforms(image, size=224)
 activations = forward.get_activations(input_tensor, use_gpu=False)
-visualize_activations(activations, images_per_row=16)
+#visualize_activations(activations, images_per_row=16)
 
 
 ############################################################################
@@ -572,7 +572,7 @@ conv4_idx = 10
 conv_4 = model.features[conv4_idx]
 responses = process.get_filter_responses(
     conv_4, peaks, input_=None, lr=1, n_iter=30, blur=None)
-visualize_filters(responses, conv4_idx, peaks, images_per_row=4)
+#visualize_filters(responses, conv4_idx, peaks, images_per_row=4)
 
 
 ############################################################################
@@ -596,7 +596,7 @@ for name, image in data.items():
     gradients = backprop.calculate_gradients(
         input_tensor, target_class, guided=True, use_gpu=False)
     max_gradients = gradients.max(dim=0, keepdim=True)[0]
-    visualize_gradients(input_tensor, gradients, max_gradients)
+    #visualize_gradients(input_tensor, gradients, max_gradients)
 
 
 ############################################################################
@@ -607,14 +607,16 @@ for name, image in data.items():
 # image to be all zero, and look at the probability of the class.
 # We visualize this probability as a 2-dimensional heat map.
 # Note that we reduce the size of the image to speed up the computation,
-# having an impact on the true predicted class probability.
+# having an impact on the true predicted class probability. You must set
+# size=128 to get nice results and sometimes addapt the block_size.
 
-for name, image in data.items():
-    input_tensor = apply_transforms(image, size=128)
-    target_class = targets[name]
-    occluder = Occluder(model, block_size=(40 if target_class == 24 else 10))
-    probs, klass_probs_saliency = occluder.get_saliency(
-        input_tensor[0], target_class, batch_size=1000, use_gpu=False)
-    visualize_saliency(input_tensor, klass_probs_saliency)
+name = "peacock"
+image = data[name]
+occluder = Occluder(model, block_size=10)
+input_tensor = apply_transforms(image, size=64)
+target_class = targets[name]
+probs, klass_probs_saliency = occluder.get_saliency(
+    input_tensor[0], target_class, batch_size=100, use_gpu=False)
+visualize_saliency(input_tensor, klass_probs_saliency)
 
 plt.show()
