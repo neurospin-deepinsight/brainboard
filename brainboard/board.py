@@ -14,6 +14,7 @@ Common functions to display a dynamic board.
 # Imports
 import sys
 import json
+from skimage.transform import rescale
 from subprocess import Popen, PIPE
 import numpy as np
 import visdom
@@ -63,7 +64,7 @@ class Board(object):
         print("Starting visdom server:\n{0}".format(cmd))
         self.server = Popen(cmd, shell=True, stdout=PIPE, stderr=PIPE)
 
-    def update_image(self, name, images, title=None):
+    def update_images(self, name, images, title=None):
         """ Update image display.
 
         Parameters
@@ -81,8 +82,34 @@ class Board(object):
                 "You must define a function that transforms the "
                 "predictions into a Nx1xXxY or Nx3xXxY array, with N "
                 "the number of images.")
+        # Ensuring that the images are not to big
+        new_images = []
+        for idx, image in enumerate(images):
+            new_images.append(image)
+            while not True in [shape < 500 for shape in image.shape[1:]]:
+                # here we use the rescale function from scikitimage 1.80, which
+                # requires the channel dimension to be last. In next versions
+                # it will be changed by giving the index to "channel_idx" argument
+                image = image.transpose((1, 2, 0))
+                image = rescale(image,  0.5, anti_aliasing=True, multichannel=True)
+                new_images[idx] = image.transpose((2, 0, 1))
+        images = np.asarray(new_images)
         self.viewer.images(
             images, opts={"title": title or name, "caption": name}, win=name)
+
+    def update_image(self, name, image, title=None):
+        """ Update image display.
+
+        Parameters
+        ----------
+        name: str
+            the name of the plot to be updated.
+        images: array (1,X,Y) or (3,X,Y)
+            the images to be displayed.
+        title: str, default None
+            the image title.
+        """
+        self.update_images(name, np.asarray(image)[np.newaxis], title)
 
     def update_plot(self, name, x, y):
         """ Update plot.
