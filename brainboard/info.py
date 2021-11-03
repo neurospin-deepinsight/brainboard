@@ -69,5 +69,6 @@ REQUIRES = [
     "torchinfo>=1.5.2",
     "torchviz>=0.0.2",
     "torch>=1.8.1",
-    "torchvision>=0.9.1"
+    "torchvision>=0.9.1",
+    "scikit-image>=0.18.3",
 ]
