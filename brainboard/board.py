@@ -86,12 +86,14 @@ class Board(object):
         new_images = []
         for idx, image in enumerate(images):
             new_images.append(image)
-            while not True in [shape < 500 for shape in image.shape[1:]]:
+            while True not in [shape < 500 for shape in image.shape[1:]]:
                 # here we use the rescale function from scikitimage 1.80, which
                 # requires the channel dimension to be last. In next versions
-                # it will be changed by giving the index to "channel_idx" argument
+                # it will be changed by giving the index to "channel_idx"
+                # argument
                 image = image.transpose((1, 2, 0))
-                image = rescale(image,  0.5, anti_aliasing=True, multichannel=True)
+                image = rescale(
+                    image,  0.5, anti_aliasing=True, multichannel=True)
                 new_images[idx] = image.transpose((2, 0, 1))
         images = np.asarray(new_images)
         self.viewer.images(
