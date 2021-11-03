@@ -106,8 +106,8 @@ class Board(object):
         ----------
         name: str
             the name of the plot to be updated.
-        images: array (1,X,Y) or (3,X,Y)
-            the images to be displayed.
+        image: array (1,X,Y) or (3,X,Y)
+            the image to be displayed.
         title: str, default None
             the image title.
         """
