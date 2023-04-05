@@ -59,7 +59,7 @@ class GradientAscent(object):
         self._lr = lr
         self.upscaling_steps = upscaling_steps
         self.upscaling_factor = upscaling_factor
-        self._use_gpu = use_gpu
+        self.use_gpu = use_gpu
         self.num_layers = len(list(self.model.named_children()))
         self.activation = None
         self.gradients = None

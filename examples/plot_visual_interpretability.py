@@ -595,6 +595,7 @@ for name, image in data.items():
     target_class = targets[name]
     gradients = backprop.calculate_gradients(
         input_tensor, target_class, guided=True, use_gpu=False)
+    print("- gradients:", gradients.shape)
     max_gradients = gradients.max(dim=0, keepdim=True)[0]
     visualize_gradients(input_tensor, gradients, max_gradients)
 

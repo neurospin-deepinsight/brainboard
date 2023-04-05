@@ -170,6 +170,7 @@ class Backprop(object):
             self.activation_outputs = []
             self._register_activation_hooks()
 
+        input_tensor = input_tensor.detach().requires_grad_(True)
         if torch.cuda.is_available() and use_gpu:
             self.model = self.model.to("cuda")
             input_tensor = input_tensor.to("cuda")
@@ -179,13 +180,15 @@ class Backprop(object):
 
         # Get a raw prediction value (logit) from the last linear layer
         output = self.model(input_tensor)
+        if isinstance(output, tuple) or isinstance(output, list):
+            output = output[0]
 
         # Don't set the gradient target if the model is a binary classifier
         # i.e. has one class prediction
         if target_class is None or len(output.shape) == 1:
             target = None
         else:
-            _, top_class = output.topk(1, dim=1)
+            _, top_class = output.topk(k=1, dim=1)
 
             # Create a 2D tensor with shape (1, num_classes) and
             # set all element to zero
@@ -236,11 +239,12 @@ class Backprop(object):
             if type(layer) != self.conv_klass:
                 raise TypeError("The layer must be {0}.".format(
                     self.conv_klass))
-            layer.register_backward_hook(_record_gradients_nocheck)
+            layer.register_full_backward_hook(_record_gradients_nocheck)
         else:
-            for _, module in self.model.named_modules():
+            for name, module in self.model.named_modules():
                 if isinstance(module, self.conv_klass):
-                    module.register_backward_hook(_record_gradients)
+                    print(name, module)
+                    module.register_full_backward_hook(_record_gradients)
                     break
 
     def _register_activation_hooks(self):
@@ -255,7 +259,7 @@ class Backprop(object):
             clippled_grad_out = grad_out[0].clamp(0.0)
             return (clippled_grad_out.mul(activation_output), )
 
-        for _, module in self.model.named_modules():
+        for name, module in self.model.named_modules():
             if isinstance(module, self.activation_klass):
                 module.register_forward_hook(_record_output)
-                module.register_backward_hook(_clip_gradients)
+                module.register_full_backward_hook(_clip_gradients)

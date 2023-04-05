@@ -33,6 +33,7 @@ def plot_net(model, input_size, outfile=None):
         the file containing the graph image.
     """
     x = torch.randn(input_size)
+    x = x.to(next(model.parameters()).device)
     graph = make_dot(model(x), params=dict(model.named_parameters()))
     graph.format = "png"
     if outfile is None:
