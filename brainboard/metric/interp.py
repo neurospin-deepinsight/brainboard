@@ -68,8 +68,8 @@ def check_state_dicts(state_1, state_2):
     state_2: dict
         second model parameter dictionary as generated with 'state_dict'.
     """
-    assert sorted(state_1.keys()) == sorted(state_2.keys()) 
-    
+    assert sorted(state_1.keys()) == sorted(state_2.keys())
+
 
 def interpolate_state_dicts(state_1, state_2, coeff):
     """ Interpolated two model weights.
@@ -89,7 +89,7 @@ def interpolate_state_dicts(state_1, state_2, coeff):
         hybrid model parameter dictionary generated using linear interpolation.
     """
     return {key: (1 - coeff) * state_1[key] + coeff * state_2[key]
-          for key in state_1.keys()}
+            for key in state_1.keys()}
 
 
 def test_pred(loader, model, criterion):
@@ -143,7 +143,7 @@ class AverageMeter(object):
         self.count += n
 
     @property
-    def avg(self): 
+    def avg(self):
         return self.sum / self.count
 
 
@@ -159,9 +159,6 @@ def calc_accuracy(output, target, topk=(1,)):
         correct = pred.eq(target.view(1, -1).expand_as(pred))
         res = []
         for k in topk:
-          correct_k = correct[:k].view(-1).float().sum(0, keepdim=True)
-          res.append(correct_k.mul_(100.0 / batch_size))
+            correct_k = correct[:k].view(-1).float().sum(0, keepdim=True)
+            res.append(correct_k.mul_(100.0 / batch_size))
     return res
-
-
-

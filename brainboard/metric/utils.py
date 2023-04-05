@@ -98,7 +98,7 @@ def layer_at(model, layer_name, x, eval_fct=None, eval_kwargs=None):
     if eval_fct is not None:
         eval_fct(model, x, **eval_kwargs)
     else:
-       model(x) 
+        model(x)
     _hook.remove()
 
     if isinstance(hook_x, collections.Sequence):

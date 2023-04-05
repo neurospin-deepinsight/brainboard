@@ -125,7 +125,7 @@ def centering(K):
     unit = np.ones([n, n])
     I = np.eye(n)
     H = I - unit / n
-    return np.dot(np.dot(H, K), H)  
+    return np.dot(np.dot(H, K), H)
 
 
 def rbf(X, sigma=None):

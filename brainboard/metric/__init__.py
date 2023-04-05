@@ -16,7 +16,6 @@ from .cka import linear_cka, kernel_cka
 from .interp import eval_interpolation, test_pred
 
 
-
 def paired_euclidean_dist(X, Y):
     """ Paired Euclidean l2 distance.
 
