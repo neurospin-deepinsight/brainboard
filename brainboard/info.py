@@ -63,6 +63,7 @@ ISRELEASE = True
 VERSION = __version__
 PROVIDES = ["brainboard"]
 REQUIRES = [
+    "tqdm",
     "numpy>=1.17.1",
     "matplotlib>=3.0.3",
     "visdom>=0.1.8.8",
